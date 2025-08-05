@@ -7,9 +7,8 @@ import LoveGameCard from '@/components/LoveGameCard';
 import CakeSurprise from '@/components/CakeSurprise';
 import LoveCounter from '@/components/LoveCounter';
 import BirthdayPoem from '@/components/BirthdayPoem';
-import BirthdayMessage from '@/components/BirthdayMessage';
 
-type Section = 'welcome' | 'balloons' | 'love-game' | 'cake' | 'counter' | 'message' | 'poem';
+type Section = 'welcome' | 'balloons' | 'love-game' | 'cake' | 'counter' | 'poem';
 
 const Index = () => {
   const [userName, setUserName] = useState<string>('');
@@ -54,7 +53,7 @@ const Index = () => {
     
     if (currentSection === 'counter') {
       const timer = setTimeout(() => {
-        setCurrentSection('message');
+        setCurrentSection('poem');
       }, 12000); // Show counter for 12 seconds
       return () => clearTimeout(timer);
     }
@@ -72,8 +71,6 @@ const Index = () => {
         return <CakeSurprise />;
       case 'counter':
         return <LoveCounter />;
-      case 'message':
-        return <BirthdayMessage onNext={() => setCurrentSection('poem')} />;
       case 'poem':
         return <BirthdayPoem />;
       default:
@@ -136,7 +133,7 @@ const Index = () => {
           className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-20"
         >
           <div className="flex space-x-2 bg-card/80 backdrop-blur-md rounded-full px-4 py-2 border border-neon-pink/30">
-            {['welcome', 'balloons', 'love-game', 'cake', 'counter', 'message', 'poem'].map((section, index) => (
+            {['welcome', 'balloons', 'love-game', 'cake', 'counter', 'poem'].map((section, index) => (
               <motion.div
                 key={section}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
