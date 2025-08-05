@@ -18,6 +18,23 @@ const BalloonGame: React.FC<BalloonGameProps> = ({ onComplete }) => {
   const [balloons, setBalloons] = useState<Balloon[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [gameComplete, setGameComplete] = useState(false);
+  const [currentMessage, setCurrentMessage] = useState('');
+  const [showMessage, setShowMessage] = useState(false);
+
+  const sweetMessages = [
+    "You light up my world! ✨",
+    "You're my sunshine! ☀️",
+    "Forever and always! 💕",
+    "You make me smile! 😊",
+    "My heart beats for you! 💓",
+    "You're absolutely amazing! 🌟",
+    "Love you to the moon! 🌙",
+    "You're my everything! 💖",
+    "Perfect in every way! 🥰",
+    "My sweet angel! 👼",
+    "You're incredible! ✨",
+    "Best thing in my life! 🌺"
+  ];
 
   const balloonColors = [
     'text-neon-pink',
@@ -40,6 +57,15 @@ const BalloonGame: React.FC<BalloonGameProps> = ({ onComplete }) => {
   }, []);
 
   const popBalloon = (balloonId: number) => {
+    // Show sweet message
+    const message = sweetMessages[balloonId % sweetMessages.length];
+    setCurrentMessage(message);
+    setShowMessage(true);
+    
+    setTimeout(() => {
+      setShowMessage(false);
+    }, 2000);
+
     setBalloons(prev => 
       prev.map(balloon => 
         balloon.id === balloonId 
@@ -131,6 +157,24 @@ const BalloonGame: React.FC<BalloonGameProps> = ({ onComplete }) => {
           ))}
         </AnimatePresence>
       </div>
+
+      {/* Sweet Messages */}
+      <AnimatePresence>
+        {showMessage && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0, y: -50 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0, y: 50 }}
+            className="absolute top-10 left-1/2 transform -translate-x-1/2 z-30"
+          >
+            <div className="bg-romantic-gradient px-8 py-4 rounded-full shadow-neon">
+              <p className="text-white text-xl font-semibold text-center">
+                {currentMessage}
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Completion message */}
       <AnimatePresence>

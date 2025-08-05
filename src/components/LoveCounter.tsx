@@ -3,26 +3,40 @@ import { motion } from 'framer-motion';
 
 const LoveCounter: React.FC = () => {
   const [timeElapsed, setTimeElapsed] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
+    days: 2,
+    hours: 5,
+    minutes: 1,
+    seconds: 45,
   });
-
-  // Set your relationship start date here (example date)
-  const relationshipStart = new Date('2023-01-01T00:00:00');
 
   useEffect(() => {
     const timer = setInterval(() => {
-      const now = new Date();
-      const diff = now.getTime() - relationshipStart.getTime();
+      setTimeElapsed(prev => {
+        let newSeconds = prev.seconds + 1;
+        let newMinutes = prev.minutes;
+        let newHours = prev.hours;
+        let newDays = prev.days;
 
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        if (newSeconds >= 60) {
+          newSeconds = 0;
+          newMinutes += 1;
+        }
+        if (newMinutes >= 60) {
+          newMinutes = 0;
+          newHours += 1;
+        }
+        if (newHours >= 24) {
+          newHours = 0;
+          newDays += 1;
+        }
 
-      setTimeElapsed({ days, hours, minutes, seconds });
+        return {
+          days: newDays,
+          hours: newHours,
+          minutes: newMinutes,
+          seconds: newSeconds,
+        };
+      });
     }, 1000);
 
     return () => clearInterval(timer);

@@ -1,17 +1,52 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import romanticCake from '@/assets/romantic-cake.jpg';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const CakeSurprise: React.FC = () => {
+  const [visiblePieces, setVisiblePieces] = useState<number[]>([]);
+
+  const cakePieces = [
+    { emoji: '🍰', delay: 0, position: 'bottom-center' },
+    { emoji: '🎂', delay: 0.5, position: 'center' },
+    { emoji: '🕯️', delay: 1, position: 'top-left' },
+    { emoji: '🕯️', delay: 1.2, position: 'top-center' },
+    { emoji: '🕯️', delay: 1.4, position: 'top-right' },
+    { emoji: '🍓', delay: 1.8, position: 'middle-left' },
+    { emoji: '🍓', delay: 2, position: 'middle-right' },
+    { emoji: '✨', delay: 2.2, position: 'top-far-left' },
+    { emoji: '✨', delay: 2.4, position: 'top-far-right' },
+  ];
+
+  useEffect(() => {
+    cakePieces.forEach((piece, index) => {
+      setTimeout(() => {
+        setVisiblePieces(prev => [...prev, index]);
+      }, piece.delay * 1000);
+    });
+  }, []);
+
+  const getPosition = (position: string) => {
+    const positions = {
+      'bottom-center': 'left-1/2 bottom-4 transform -translate-x-1/2',
+      'center': 'left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2',
+      'top-left': 'left-1/3 top-1/4 transform -translate-x-1/2',
+      'top-center': 'left-1/2 top-1/4 transform -translate-x-1/2',
+      'top-right': 'left-2/3 top-1/4 transform -translate-x-1/2',
+      'middle-left': 'left-1/4 top-1/2 transform -translate-x-1/2 -translate-y-1/2',
+      'middle-right': 'right-1/4 top-1/2 transform translate-x-1/2 -translate-y-1/2',
+      'top-far-left': 'left-1/6 top-1/6',
+      'top-far-right': 'right-1/6 top-1/6',
+    };
+    return positions[position as keyof typeof positions] || 'left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2';
+  };
+
   return (
     <section className="min-h-screen flex items-center justify-center py-20 px-6">
       <div className="text-center max-w-4xl mx-auto">
-        {/* Animated Cake */}
+        {/* Animated Cake Building */}
         <motion.div
-          className="mb-12"
+          className="mb-12 relative"
           animate={{
-            y: [0, -20, 0],
-            rotate: [0, 5, -5, 0],
+            y: [0, -10, 0],
           }}
           transition={{
             duration: 4,
@@ -19,45 +54,58 @@ const CakeSurprise: React.FC = () => {
             ease: "easeInOut",
           }}
         >
-          <div className="relative inline-block">
-            <motion.img
-              src={romanticCake}
-              alt="Romantic Birthday Cake"
-              className="w-64 h-64 md:w-80 md:h-80 mx-auto rounded-3xl shadow-neon"
+          <div className="relative w-80 h-80 mx-auto">
+            <AnimatePresence>
+              {cakePieces.map((piece, index) => (
+                visiblePieces.includes(index) && (
+                  <motion.div
+                    key={index}
+                    initial={{ 
+                      scale: 0, 
+                      opacity: 0, 
+                      y: -100,
+                      rotate: Math.random() * 360 
+                    }}
+                    animate={{ 
+                      scale: 1, 
+                      opacity: 1, 
+                      y: 0,
+                      rotate: 0
+                    }}
+                    exit={{ 
+                      scale: 0, 
+                      opacity: 0 
+                    }}
+                    transition={{
+                      type: "spring",
+                      damping: 15,
+                      stiffness: 200,
+                      duration: 0.8
+                    }}
+                    className={`absolute text-6xl md:text-8xl ${getPosition(piece.position)}`}
+                    style={{
+                      filter: 'drop-shadow(0 0 15px rgba(255, 0, 128, 0.5))',
+                    }}
+                  >
+                    {piece.emoji}
+                  </motion.div>
+                )
+              ))}
+            </AnimatePresence>
+
+            {/* Background glow effect */}
+            <motion.div
+              className="absolute inset-0 rounded-full"
               animate={{
-                filter: [
-                  'drop-shadow(0 0 20px hsl(var(--neon-pink)))',
-                  'drop-shadow(0 0 30px hsl(var(--neon-purple)))',
-                  'drop-shadow(0 0 20px hsl(var(--neon-blue)))',
-                  'drop-shadow(0 0 30px hsl(var(--neon-pink)))',
+                background: [
+                  'radial-gradient(circle, rgba(255,0,128,0.1) 0%, transparent 70%)',
+                  'radial-gradient(circle, rgba(128,0,255,0.1) 0%, transparent 70%)',
+                  'radial-gradient(circle, rgba(0,160,255,0.1) 0%, transparent 70%)',
+                  'radial-gradient(circle, rgba(255,0,128,0.1) 0%, transparent 70%)',
                 ],
               }}
               transition={{ duration: 3, repeat: Infinity }}
             />
-            
-            {/* Floating sparkles around cake */}
-            {[...Array(8)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute text-2xl"
-                style={{
-                  left: `${Math.cos(i * Math.PI / 4) * 120 + 50}%`,
-                  top: `${Math.sin(i * Math.PI / 4) * 120 + 50}%`,
-                }}
-                animate={{
-                  scale: [0, 1, 0],
-                  opacity: [0, 1, 0],
-                  rotate: [0, 360],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  delay: i * 0.25,
-                }}
-              >
-                ✨
-              </motion.div>
-            ))}
           </div>
         </motion.div>
 
